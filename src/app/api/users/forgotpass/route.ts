@@ -19,7 +19,22 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
-    await sendEmail({ email, emailtype: "RESET", userId: user._id });
+    // Send reset email with timeout protection
+    try {
+      const emailPromise = sendEmail({ email, emailtype: "RESET", userId: user._id });
+      const timeoutPromise = new Promise((_, reject) => 
+        setTimeout(() => reject(new Error('Email timeout')), 10000)
+      );
+      
+      await Promise.race([emailPromise, timeoutPromise]);
+      console.log("✅ Reset email sent successfully");
+    } catch (emailError) {
+      console.error("⚠️  Reset email sending failed:", emailError);
+      return NextResponse.json({ 
+        error: "Failed to send reset email", 
+        details: emailError instanceof Error ? emailError.message : "Unknown error"
+      }, { status: 500 });
+    }
 
     return NextResponse.json({
       message: "Password reset email sent successfully",

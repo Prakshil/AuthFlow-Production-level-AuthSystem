@@ -17,8 +17,8 @@ export const sendEmail = async ({ email, emailtype, userId }: any) => {
       await User.findByIdAndUpdate(
         userId,
         {
-          forgotpasswordToken: hashedToken,
-          forgotpasswordTokenExpiry: Date.now() + 3600000,
+          forgotPasswordToken: hashedToken,
+          forgotPasswordExpiry: Date.now() + 3600000,
         },
         { new: true, runValidators: true }
       );
