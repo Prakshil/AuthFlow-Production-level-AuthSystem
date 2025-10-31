@@ -3,17 +3,21 @@ import User from "@/models/user.models";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { NextRequest,NextResponse } from "next/server";
-import dotenv from "dotenv";
-
-dotenv.config();
-
-
-dbconnect();
 
 export async function POST(request: NextRequest) {
     try {
+        await dbconnect();
+        
         const rqBody = await request.json();
         const { email, password } = rqBody;
+        
+        if (!email || !password) {
+            return NextResponse.json(
+                { message: "Email and password are required" },
+                { status: 400 }
+            );
+        }
+        
         const existingUser = await User.findOne({ email });
         if (!existingUser) {
             return NextResponse.json(
@@ -46,7 +50,7 @@ export async function POST(request: NextRequest) {
             email: existingUser.email
         }
         // generate token (JWT) here
-        const token = jwt.sign(tokenData, process.env.JWT_SECRET!, { expiresIn: "1h" });
+        const token = jwt.sign(tokenData, process.env.TOKEN_SECRET!, { expiresIn: "1h" });
         const response = NextResponse.json(
             { message: "Login successful", token },
             { status: 200 }
@@ -62,11 +66,11 @@ export async function POST(request: NextRequest) {
 
         
 
-    } catch (error) {
+    } catch (error: any) {
+        console.error("Login API Error:", error);
         return NextResponse.json(
-            { message: "Internal Server Error" },
+            { message: "Internal Server Error", error: error.message },
             { status: 500 }
         );
-        
     }
 }

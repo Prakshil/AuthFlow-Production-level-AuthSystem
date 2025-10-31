@@ -3,10 +3,11 @@ import { NextResponse } from "next/server";
 import { NextRequest } from "next/server";
 import User from "@/models/user.models";
 import { dbconnect } from "@/dbConfig/dbConfig";
-dbconnect();
 
 export async function GET(request: NextRequest) {
     try {
+        await dbconnect();
+        
         const userId = getDataFromToken(request);
         if (!userId) {
             return NextResponse.json(

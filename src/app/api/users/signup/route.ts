@@ -4,10 +4,10 @@ import bcrypt from "bcryptjs";
 import { NextRequest,NextResponse } from "next/server";
 import { sendEmail } from "@/utils/mailer";
 
-dbconnect();
-
 export async function POST(request: NextRequest) {
     try {
+        await dbconnect();
+        
         const body = await request.json();
         const { name, email, password } = body;
         

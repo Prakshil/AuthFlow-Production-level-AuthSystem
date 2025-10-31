@@ -3,13 +3,16 @@ import User from "@/models/user.models";
 import { NextRequest, NextResponse } from "next/server";
 import { sendEmail } from "@/utils/mailer";
 
-
-dbconnect();
-
 export async function POST(request: NextRequest) {
   try {
+    await dbconnect();
+    
     const reqBody = await request.json();
     const { email } = reqBody;
+
+    if (!email) {
+      return NextResponse.json({ error: "Email is required" }, { status: 400 });
+    }
 
     const user = await User.findOne({ email });
     if (!user) {
@@ -24,6 +27,10 @@ export async function POST(request: NextRequest) {
     });
 
   } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    console.error("Forgot Password API Error:", error);
+    return NextResponse.json({ 
+      error: "Failed to send reset email", 
+      details: error.message 
+    }, { status: 500 });
   }
 }
