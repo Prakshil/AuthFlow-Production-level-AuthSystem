@@ -122,11 +122,37 @@ export async function POST(request: NextRequest) {
         console.error("Error message:", error instanceof Error ? error.message : "Unknown error");
         console.error("Error stack:", error instanceof Error ? error.stack : "No stack trace");
         
-        // Return detailed error for debugging
+        // Handle MongoDB duplicate key errors
+        if (error instanceof Error && error.message.includes('E11000 duplicate key error')) {
+            let field = 'field';
+            let value = '';
+            
+            if (error.message.includes('username_1')) {
+                field = 'username';
+                const match = error.message.match(/username: "([^"]+)"/);
+                value = match ? match[1] : '';
+            } else if (error.message.includes('email_1')) {
+                field = 'email';
+                const match = error.message.match(/email: "([^"]+)"/);
+                value = match ? match[1] : '';
+            }
+            
+            return NextResponse.json(
+                { 
+                    success: false,
+                    message: `A user with this ${field} already exists. Please use a different ${field}.`,
+                    field,
+                    error: "DUPLICATE_KEY"
+                },
+                { status: 409 }
+            );
+        }
+        
+        // Return detailed error for other errors
         return NextResponse.json(
             { 
                 success: false,
-                message: "Signup failed - detailed error info", 
+                message: "Signup failed - please try again", 
                 error: {
                     name: error instanceof Error ? error.name : "Unknown",
                     message: error instanceof Error ? error.message : "Unknown error",
