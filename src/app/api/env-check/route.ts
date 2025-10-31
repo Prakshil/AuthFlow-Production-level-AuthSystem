@@ -21,10 +21,11 @@ export async function GET() {
 
     return NextResponse.json({
       success: allCriticalSet,
-      message: allCriticalSet ? "All critical environment variables configured" : `Missing critical variables: ${missingCritical.join(', ')}`,
+      message: allCriticalSet ? "All critical environment variables configured ✅" : `Missing critical variables: ${missingCritical.join(', ')}`,
       environment: envCheck,
       missingCritical,
       actualDomain: process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'localhost',
+      deploymentTime: new Date().toISOString(),
       timestamp: new Date().toISOString()
     });
 
