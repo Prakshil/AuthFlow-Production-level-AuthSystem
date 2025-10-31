@@ -136,7 +136,7 @@ export default function AdminDashboard() {
                                 placeholder="Search by name or email..."
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
-                                className="w-full p-3 bg-gray-900/50 border border-gray-700 rounded-lg focus:border-white focus:outline-none transition-all duration-300"
+                                className="w-full px-4 py-3 bg-gray-900/50 border border-gray-700 rounded-xl focus:border-white focus:outline-none transition-all duration-300 text-white placeholder-gray-500"
                             />
                         </div>
                         <div>
@@ -144,11 +144,17 @@ export default function AdminDashboard() {
                             <select
                                 value={filterRole}
                                 onChange={(e) => setFilterRole(e.target.value)}
-                                className="w-full p-3 bg-gray-900/50 border border-gray-700 rounded-lg focus:border-white focus:outline-none transition-all duration-300"
+                                className="w-full px-4 py-3 bg-gray-900/50 border border-gray-700 rounded-xl focus:border-white focus:outline-none transition-all duration-300 text-white cursor-pointer appearance-none"
+                                style={{
+                                    backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='white'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E")`,
+                                    backgroundRepeat: 'no-repeat',
+                                    backgroundPosition: 'right 0.75rem center',
+                                    backgroundSize: '1.25rem'
+                                }}
                             >
-                                <option value="all">All Roles</option>
-                                <option value="admin">Admin</option>
-                                <option value="user">User</option>
+                                <option value="all" className="bg-gray-900 text-white py-2">All Roles</option>
+                                <option value="admin" className="bg-gray-900 text-white py-2">Admin</option>
+                                <option value="user" className="bg-gray-900 text-white py-2">User</option>
                             </select>
                         </div>
                         <div>
@@ -156,11 +162,17 @@ export default function AdminDashboard() {
                             <select
                                 value={filterStatus}
                                 onChange={(e) => setFilterStatus(e.target.value)}
-                                className="w-full p-3 bg-gray-900/50 border border-gray-700 rounded-lg focus:border-white focus:outline-none transition-all duration-300"
+                                className="w-full px-4 py-3 bg-gray-900/50 border border-gray-700 rounded-xl focus:border-white focus:outline-none transition-all duration-300 text-white cursor-pointer appearance-none"
+                                style={{
+                                    backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='white'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E")`,
+                                    backgroundRepeat: 'no-repeat',
+                                    backgroundPosition: 'right 0.75rem center',
+                                    backgroundSize: '1.25rem'
+                                }}
                             >
-                                <option value="all">All Status</option>
-                                <option value="verified">Verified</option>
-                                <option value="unverified">Unverified</option>
+                                <option value="all" className="bg-gray-900 text-white py-2">All Status</option>
+                                <option value="verified" className="bg-gray-900 text-white py-2">Verified</option>
+                                <option value="unverified" className="bg-gray-900 text-white py-2">Unverified</option>
                             </select>
                         </div>
                     </div>
