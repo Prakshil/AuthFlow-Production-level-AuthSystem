@@ -1,11 +1,11 @@
 "use client";
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import toast from 'react-hot-toast';
 import axios from 'axios';
 
-export default function VerifyEmailPage() {
+function VerifyEmailContent() {
     const [verifying, setVerifying] = useState(true);
     const [verified, setVerified] = useState(false);
     const [error, setError] = useState("");
@@ -128,5 +128,24 @@ export default function VerifyEmailPage() {
                 <div className="absolute -bottom-4 -left-4 w-6 h-6 bg-red-500/10 rounded-full animate-float" style={{animationDelay: '1s'}}></div>
             </div>
         </div>
+    );
+}
+
+function LoadingFallback() {
+    return (
+        <div className="min-h-screen bg-black text-white flex items-center justify-center">
+            <div className="text-center">
+                <div className="w-16 h-16 border-2 border-white border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+                <p className="text-gray-400">Loading...</p>
+            </div>
+        </div>
+    );
+}
+
+export default function VerifyEmailPage() {
+    return (
+        <Suspense fallback={<LoadingFallback />}>
+            <VerifyEmailContent />
+        </Suspense>
     );
 }
