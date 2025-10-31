@@ -56,10 +56,39 @@ export async function POST(request: NextRequest) {
             isVerified: false, // Set back to false for email verification
         });
         console.log("✅ STEP 5: User object created");
+        console.log("User object details:", {
+            username: newUser.username,
+            email: newUser.email,
+            hasPassword: !!newUser.password,
+            isVerified: newUser.isVerified,
+            collection: User.collection.name
+        });
         
         console.log("🔍 STEP 6: Saving user to database...");
+        console.log("MongoDB connection state:", {
+            readyState: require('mongoose').connection.readyState,
+            host: require('mongoose').connection.host,
+            name: require('mongoose').connection.name
+        });
+        
         const savedUser = await newUser.save();
         console.log("✅ STEP 6: User saved to database with ID:", savedUser._id);
+        console.log("Saved user details:", {
+            id: savedUser._id,
+            username: savedUser.username,
+            email: savedUser.email,
+            isVerified: savedUser.isVerified,
+            createdAt: savedUser.createdAt
+        });
+        
+        // Verify the user was actually saved
+        console.log("🔍 STEP 6.5: Verifying user was saved...");
+        const verifyUser = await User.findById(savedUser._id);
+        if (!verifyUser) {
+            console.error("❌ CRITICAL: User was NOT found after save!");
+            throw new Error("User save verification failed");
+        }
+        console.log("✅ STEP 6.5: User verified in database");
         
         console.log("🔍 STEP 7: Attempting to send verification email...");
         try {
