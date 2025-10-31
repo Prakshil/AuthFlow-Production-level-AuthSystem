@@ -61,12 +61,23 @@ export async function POST(request: NextRequest) {
         const savedUser = await newUser.save();
         console.log("✅ STEP 6: User saved to database with ID:", savedUser._id);
         
-        // Skip email for now to isolate the core issue
-        console.log("⚠️ STEP 7: Skipping email sending for debugging");
+        console.log("🔍 STEP 7: Attempting to send verification email...");
+        try {
+            const emailResult = await sendEmail({
+                email: savedUser.email,
+                emailtype: "VERIFY",
+                userId: savedUser._id
+            });
+            console.log("✅ STEP 7: Verification email sent successfully");
+            console.log("Email result:", emailResult);
+        } catch (emailError) {
+            console.error("❌ STEP 7: Email sending failed:", emailError);
+            // Don't fail the signup if email fails
+        }
         
         return NextResponse.json(
             { 
-                message: "User created successfully! (Email verification skipped for debugging)", 
+                message: "User created successfully! Please check your email for verification.", 
                 user: { 
                     id: savedUser._id, 
                     email: savedUser.email, 
