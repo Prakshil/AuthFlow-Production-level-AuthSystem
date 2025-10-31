@@ -5,7 +5,7 @@ export async function GET() {
     const envCheck = {
       NODE_ENV: process.env.NODE_ENV || "❌ Not set",
       MONGODB_URI: process.env.MONGODB_URI ? "✅ Set" : "❌ Missing",
-      TOKEN_SECRET: process.env.TOKEN_SECRET ? "✅ Set" : "❌ Missing",
+      TOKEN_SECRET: process.env.TOKEN_SECRET ? "✅ Set" : "❌ Missing", 
       SMTP_HOST: process.env.SMTP_HOST ? "✅ Set" : "❌ Missing",
       SMTP_USER: process.env.SMTP_USER ? "✅ Set" : "❌ Missing",
       SMTP_PASS: process.env.SMTP_PASS ? "✅ Set" : "❌ Missing",
@@ -14,12 +14,17 @@ export async function GET() {
       PRODUCTION_DOMAIN: process.env.PRODUCTION_DOMAIN || "❌ Not set",
     };
 
-    const allSet = Object.values(envCheck).every(value => value.includes("✅"));
+    // Check for critical missing variables only
+    const criticalVars = ['MONGODB_URI', 'TOKEN_SECRET', 'SMTP_HOST', 'SMTP_USER', 'SMTP_PASS', 'EMAIL_FROM'];
+    const missingCritical = criticalVars.filter(key => !process.env[key]);
+    const allCriticalSet = missingCritical.length === 0;
 
     return NextResponse.json({
-      success: allSet,
-      message: allSet ? "All environment variables configured" : "Some environment variables missing",
+      success: allCriticalSet,
+      message: allCriticalSet ? "All critical environment variables configured" : `Missing critical variables: ${missingCritical.join(', ')}`,
       environment: envCheck,
+      missingCritical,
+      actualDomain: process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'localhost',
       timestamp: new Date().toISOString()
     });
 

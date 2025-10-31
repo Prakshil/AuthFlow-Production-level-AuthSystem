@@ -5,7 +5,11 @@ export const env = {
   // Domain configuration
   get DOMAIN() {
     if (this.NODE_ENV === 'production') {
-      return process.env.PRODUCTION_DOMAIN || process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'https://your-production-domain.com';
+      // Use VERCEL_URL if available, otherwise fallback to PRODUCTION_DOMAIN
+      if (process.env.VERCEL_URL) {
+        return `https://${process.env.VERCEL_URL}`;
+      }
+      return process.env.PRODUCTION_DOMAIN || 'https://your-production-domain.com';
     }
     return process.env.DOMAIN || 'http://localhost:3000';
   },

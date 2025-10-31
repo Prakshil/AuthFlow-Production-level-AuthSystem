@@ -80,9 +80,10 @@ export async function POST(request: NextRequest) {
             
         } catch (emailError) {
             console.error("⚠️  Email sending failed:", emailError);
+            // Return success even if email fails - don't let email errors break signup
             return NextResponse.json(
                 { 
-                    message: "User created successfully, but verification email failed to send. Please try requesting a new verification email.", 
+                    message: "User created successfully! Email verification may have failed, but you can try logging in.", 
                     user: { 
                         id: savedUser._id, 
                         email: savedUser.email, 
@@ -95,16 +96,18 @@ export async function POST(request: NextRequest) {
         }
         
     } catch (error) {
-        console.error("❌ ERROR in signup:", error);
+        console.error("❌ CRITICAL ERROR in signup:", error);
         console.error("Error name:", error instanceof Error ? error.name : "Unknown");
         console.error("Error message:", error instanceof Error ? error.message : "Unknown error");
         console.error("Error stack:", error instanceof Error ? error.stack : "No stack trace");
         
+        // Provide detailed error information for debugging
         return NextResponse.json(
             { 
-                message: "Internal Server Error", 
+                message: "Signup failed", 
                 error: error instanceof Error ? error.message : "Unknown error",
-                stack: error instanceof Error ? error.stack : "No stack trace"
+                errorType: error instanceof Error ? error.name : "Unknown",
+                stack: error instanceof Error ? error.stack?.split('\n').slice(0, 5).join('\n') : "No stack trace"
             },
             { status: 500 }
         );
