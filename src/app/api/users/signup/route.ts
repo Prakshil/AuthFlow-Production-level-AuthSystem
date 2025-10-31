@@ -7,6 +7,14 @@ import { sendEmail } from "@/utils/mailer";
 export async function POST(request: NextRequest) {
     try {
         console.log("🔍 Starting signup process...");
+        console.log("Environment check:", {
+            NODE_ENV: process.env.NODE_ENV,
+            MONGODB_URI: process.env.MONGODB_URI ? "✅ Set" : "❌ Missing",
+            TOKEN_SECRET: process.env.TOKEN_SECRET ? "✅ Set" : "❌ Missing",
+            SMTP_HOST: process.env.SMTP_HOST ? "✅ Set" : "❌ Missing",
+            SMTP_USER: process.env.SMTP_USER ? "✅ Set" : "❌ Missing",
+        });
+        
         await dbconnect();
         console.log("✅ Database connected successfully");
         

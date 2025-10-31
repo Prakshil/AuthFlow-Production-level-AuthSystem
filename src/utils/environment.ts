@@ -5,23 +5,63 @@ export const env = {
   // Domain configuration
   get DOMAIN() {
     if (this.NODE_ENV === 'production') {
-      return process.env.PRODUCTION_DOMAIN || 'https://your-production-domain.com';
+      return process.env.PRODUCTION_DOMAIN || process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'https://your-production-domain.com';
     }
     return process.env.DOMAIN || 'http://localhost:3000';
   },
   
   // Database
-  MONGODB_URI: process.env.MONGODB_URI!,
+  get MONGODB_URI() {
+    const uri = process.env.MONGODB_URI;
+    if (!uri) {
+      throw new Error('MONGODB_URI environment variable is not set');
+    }
+    return uri;
+  },
   
   // JWT
-  TOKEN_SECRET: process.env.TOKEN_SECRET!,
+  get TOKEN_SECRET() {
+    const secret = process.env.TOKEN_SECRET;
+    if (!secret) {
+      throw new Error('TOKEN_SECRET environment variable is not set');
+    }
+    return secret;
+  },
   
   // Email configuration
-  SMTP_HOST: process.env.SMTP_HOST!,
+  get SMTP_HOST() {
+    const host = process.env.SMTP_HOST;
+    if (!host) {
+      throw new Error('SMTP_HOST environment variable is not set');
+    }
+    return host;
+  },
+  
   SMTP_PORT: parseInt(process.env.SMTP_PORT || '587'),
-  SMTP_USER: process.env.SMTP_USER!,
-  SMTP_PASS: process.env.SMTP_PASS!,
-  EMAIL_FROM: process.env.EMAIL_FROM!,
+  
+  get SMTP_USER() {
+    const user = process.env.SMTP_USER;
+    if (!user) {
+      throw new Error('SMTP_USER environment variable is not set');
+    }
+    return user;
+  },
+  
+  get SMTP_PASS() {
+    const pass = process.env.SMTP_PASS;
+    if (!pass) {
+      throw new Error('SMTP_PASS environment variable is not set');
+    }
+    return pass;
+  },
+  
+  get EMAIL_FROM() {
+    const from = process.env.EMAIL_FROM;
+    if (!from) {
+      throw new Error('EMAIL_FROM environment variable is not set');
+    }
+    return from;
+  },
   
   // Mailtrap (for development)
   MAILTRAP_TOKEN: process.env.MAILTRAP_TOKEN,
