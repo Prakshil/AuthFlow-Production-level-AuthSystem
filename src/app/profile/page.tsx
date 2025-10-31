@@ -127,6 +127,28 @@ export default function UserProfile() {
 
                             {/* Profile Details Grid */}
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                {/* Admin Dashboard Link - Only for admins */}
+                                {data.role === 'admin' && (
+                                    <Link 
+                                        href="/admin/dashboard"
+                                        className="glass p-6 rounded-xl hover:bg-gray-900/20 transition-all duration-300 group cursor-pointer md:col-span-2"
+                                    >
+                                        <div className="flex items-center justify-between">
+                                            <div>
+                                                <h3 className="text-lg font-semibold mb-2 group-hover:text-gray-200 transition-colors">
+                                                    🛡️ Admin Dashboard
+                                                </h3>
+                                                <p className="text-gray-400 text-sm group-hover:text-gray-300 transition-colors">
+                                                    View and manage all users in the system
+                                                </p>
+                                            </div>
+                                            <div className="text-2xl group-hover:translate-x-2 transition-transform duration-300">
+                                                →
+                                            </div>
+                                        </div>
+                                    </Link>
+                                )}
+                                
                                 <div className="glass p-6 rounded-xl hover:bg-gray-900/20 transition-all duration-300 group">
                                     <h3 className="text-lg font-semibold mb-3 group-hover:text-gray-200 transition-colors">User ID</h3>
                                     <p className="text-gray-400 font-mono text-sm break-all group-hover:text-gray-300 transition-colors">
