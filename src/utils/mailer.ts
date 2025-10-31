@@ -5,15 +5,11 @@ import { env } from '@/utils/environment';
 
 export const sendEmail = async ({ email, emailtype, userId }: any) => {
   try {
-    console.log(`📧 Starting email process for ${emailtype} to ${email}`);
-    
     // Generate token
     const hashedToken = await bcrypt.hash(userId.toString(), 10);
-    console.log("✅ Token generated successfully");
 
     // Update user with token
     if (emailtype === "VERIFY") {
-      console.log("🔍 Updating user with verification token...");
       await User.findByIdAndUpdate(
         userId,
         { 
@@ -22,9 +18,7 @@ export const sendEmail = async ({ email, emailtype, userId }: any) => {
         },
         { new: true, runValidators: true }
       );
-      console.log("✅ User updated with verification token");
     } else if (emailtype === "RESET") {
-      console.log("🔍 Updating user with reset token...");
       await User.findByIdAndUpdate(
         userId,
         {
@@ -33,15 +27,13 @@ export const sendEmail = async ({ email, emailtype, userId }: any) => {
         },
         { new: true, runValidators: true }
       );
-      console.log("✅ User updated with reset token");
     }
 
-    // Gmail SMTP Configuration - Direct Config
-    console.log("🔍 Creating email transporter...");
+    // Create email transporter
     const transportConfig = {
       host: env.SMTP_HOST,
       port: env.SMTP_PORT,
-      secure: false, // false for 587, true for 465
+      secure: false,
       auth: {
         user: env.SMTP_USER,
         pass: env.SMTP_PASS,
@@ -52,23 +44,13 @@ export const sendEmail = async ({ email, emailtype, userId }: any) => {
     };
     
     const transport = nodemailer.createTransport(transportConfig);
-    console.log("✅ Email transporter created");
 
-    // Verify transporter
-    try {
-      console.log("🔍 Testing SMTP connection...");
-      await transport.verify();
-      console.log("✅ SMTP connection verified");
-    } catch (verifyError) {
-      console.error("❌ Gmail connection failed:", verifyError);
-      throw new Error("Gmail SMTP configuration error");
-    }
+    // Verify connection
+    await transport.verify();
 
-    // Generate URLs directly
+    // Generate URLs
     const verifyUrl = `${env.DOMAIN}/verifyemail?token=${hashedToken}`;
     const resetUrl = `${env.DOMAIN}/resetpassword?token=${hashedToken}`;
-    
-    console.log(`🔗 Generated URL: ${emailtype === "VERIFY" ? verifyUrl : resetUrl}`);
 
     const mailOptions = {
       from: env.EMAIL_FROM,
@@ -115,9 +97,7 @@ export const sendEmail = async ({ email, emailtype, userId }: any) => {
         </div>`
     };
 
-    console.log("🔍 Sending email...");
     const result = await transport.sendMail(mailOptions);
-    console.log("✅ Email sent successfully:", result.messageId);
     
     return {
       success: true,
@@ -126,13 +106,7 @@ export const sendEmail = async ({ email, emailtype, userId }: any) => {
     };
 
   } catch (error: any) {
-    console.error("❌ Email sending error:", error);
-    console.error("Error details:", {
-      name: error.name,
-      message: error.message,
-      code: error.code,
-      response: error.response
-    });
+    console.error("Email sending error:", error.message);
     throw new Error(`Failed to send ${emailtype} email: ${error.message}`);
   }
 };

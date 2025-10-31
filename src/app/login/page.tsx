@@ -109,13 +109,7 @@ export default function LoginPage() {
                             Forgot your password?
                         </Link>
                         
-                        <Link 
-                            href="/test-verify" 
-                            className="block text-yellow-400 hover:text-yellow-300 transition-colors duration-300 text-sm"
-                        >
-                            🧪 Test Email Verification
-                        </Link>
-                        
+
                         <div className="border-t border-gray-700 pt-4">
                             <p className="text-gray-400">
                                 Don't have an account?{" "}
