@@ -82,13 +82,24 @@ export async function POST(request: NextRequest) {
         console.error("Error message:", error instanceof Error ? error.message : "Unknown error");
         console.error("Error stack:", error instanceof Error ? error.stack : "No stack trace");
         
-        // Provide detailed error information for debugging
+        // Return detailed error for debugging
         return NextResponse.json(
             { 
-                message: "Signup failed", 
-                error: error instanceof Error ? error.message : "Unknown error",
-                errorType: error instanceof Error ? error.name : "Unknown",
-                stack: error instanceof Error ? error.stack?.split('\n').slice(0, 5).join('\n') : "No stack trace"
+                success: false,
+                message: "Signup failed - detailed error info", 
+                error: {
+                    name: error instanceof Error ? error.name : "Unknown",
+                    message: error instanceof Error ? error.message : "Unknown error",
+                    stack: error instanceof Error ? error.stack?.split('\n').slice(0, 5).join('\n') : "No stack trace",
+                    type: typeof error,
+                    stringified: String(error)
+                },
+                timestamp: new Date().toISOString(),
+                environment: {
+                    NODE_ENV: process.env.NODE_ENV,
+                    hasMongoURI: !!process.env.MONGODB_URI,
+                    hasTokenSecret: !!process.env.TOKEN_SECRET
+                }
             },
             { status: 500 }
         );
