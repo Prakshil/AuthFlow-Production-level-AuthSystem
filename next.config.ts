@@ -6,8 +6,11 @@ const nextConfig: NextConfig = {
     CUSTOM_KEY: process.env.CUSTOM_KEY,
   },
   
-  // Enable experimental features for production optimization
+  // Enable server external packages for Mongoose
   serverExternalPackages: ['mongoose'],
+  
+  // Turbopack configuration for Next.js 16
+  turbopack: {},
   
   // Production optimizations
   compress: true,
