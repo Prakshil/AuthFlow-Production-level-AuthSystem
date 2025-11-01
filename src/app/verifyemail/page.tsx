@@ -11,6 +11,7 @@ function VerifyEmailContent() {
     const [error, setError] = useState("");
     const [token, setToken] = useState("");
     const [isLoaded, setIsLoaded] = useState(false);
+    const [userEmail, setUserEmail] = useState("");
     const router = useRouter();
     const searchParams = useSearchParams();
 
@@ -36,10 +37,26 @@ function VerifyEmailContent() {
             toast.success("Email verified successfully!");
         } catch (error: any) {
             setError(error.response?.data?.error || "Verification failed");
+            // Try to extract email from error if available
+            if (error.response?.data?.email) {
+                setUserEmail(error.response.data.email);
+            }
             toast.error("Email verification failed!");
         } finally {
             setVerifying(false);
         }
+    };
+
+    const handleSignUpAgain = async () => {
+        if (userEmail) {
+            try {
+                await axios.post('/api/users/delete-unverified', { email: userEmail });
+                toast.success("Account deleted. You can now sign up again.");
+            } catch (error) {
+                console.error("Failed to delete unverified account:", error);
+            }
+        }
+        router.push('/signup');
     };
 
     if (verifying) {
@@ -108,12 +125,12 @@ function VerifyEmailContent() {
                         {error || "The verification link is invalid or has expired."}
                     </p>
                     <div className="space-y-4">
-                        <Link 
-                            href="/signup" 
-                            className="block bg-white text-black px-6 py-3 rounded-lg font-medium hover:bg-gray-100 transition-all duration-300"
+                        <button
+                            onClick={handleSignUpAgain}
+                            className="block w-full bg-white text-black px-6 py-3 rounded-lg font-medium hover:bg-gray-100 transition-all duration-300"
                         >
                             Sign Up Again
-                        </Link>
+                        </button>
                         <Link 
                             href="/login" 
                             className="block text-gray-400 hover:text-white transition-colors duration-300"

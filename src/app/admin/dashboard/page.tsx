@@ -31,10 +31,21 @@ export default function AdminDashboard() {
     const [searchTerm, setSearchTerm] = useState("");
     const [filterRole, setFilterRole] = useState("all");
     const [filterStatus, setFilterStatus] = useState("all");
+    const [currentUserEmail, setCurrentUserEmail] = useState("");
 
     useEffect(() => {
         fetchUsers();
+        getCurrentUser();
     }, []);
+
+    const getCurrentUser = async () => {
+        try {
+            const response = await axios.get('/api/users/me');
+            setCurrentUserEmail(response.data.data.email);
+        } catch (error) {
+            console.error("Error fetching current user:", error);
+        }
+    };
 
     const fetchUsers = async () => {
         try {
@@ -53,6 +64,27 @@ export default function AdminDashboard() {
             setLoading(false);
         }
     };
+
+    const handleRoleChange = async (userId: string, currentRole: string) => {
+        const newRole = currentRole === 'admin' ? 'user' : 'admin';
+        const confirmMessage = `Are you sure you want to change this user's role to ${newRole.toUpperCase()}?`;
+        
+        if (!confirm(confirmMessage)) return;
+        
+        try {
+            const response = await axios.post('/api/admin/update-role', {
+                userId,
+                newRole
+            });
+            
+            toast.success(response.data.message);
+            fetchUsers(); // Refresh the list
+        } catch (error: any) {
+            toast.error(error.response?.data?.message || "Failed to update role");
+        }
+    };
+
+    const isMainAdmin = currentUserEmail === "prakshilmpatel@gmail.com";
 
     const filteredUsers = users.filter(user => {
         const matchesSearch = user.username.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -189,6 +221,9 @@ export default function AdminDashboard() {
                                     <th className="px-6 py-4 text-left text-sm font-semibold text-gray-300">Role</th>
                                     <th className="px-6 py-4 text-left text-sm font-semibold text-gray-300">Status</th>
                                     <th className="px-6 py-4 text-left text-sm font-semibold text-gray-300">Joined</th>
+                                    {isMainAdmin && (
+                                        <th className="px-6 py-4 text-left text-sm font-semibold text-gray-300">Actions</th>
+                                    )}
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-gray-800">
@@ -229,11 +264,25 @@ export default function AdminDashboard() {
                                                     day: 'numeric'
                                                 })}
                                             </td>
+                                            {isMainAdmin && (
+                                                <td className="px-6 py-4">
+                                                    {user.email !== currentUserEmail ? (
+                                                        <button
+                                                            onClick={() => handleRoleChange(user._id, user.role)}
+                                                            className="px-4 py-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 transition-all text-sm font-medium"
+                                                        >
+                                                            {user.role === 'admin' ? 'Remove Admin' : 'Make Admin'}
+                                                        </button>
+                                                    ) : (
+                                                        <span className="text-gray-500 text-sm">You</span>
+                                                    )}
+                                                </td>
+                                            )}
                                         </tr>
                                     ))
                                 ) : (
                                     <tr>
-                                        <td colSpan={5} className="px-6 py-12 text-center text-gray-400">
+                                        <td colSpan={isMainAdmin ? 6 : 5} className="px-6 py-12 text-center text-gray-400">
                                             No users found matching your filters.
                                         </td>
                                     </tr>

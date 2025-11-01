@@ -15,7 +15,12 @@ export async function POST(request: NextRequest) {
     });
 
     if (!user) {
-      return NextResponse.json({ error: "Invalid or expired token" }, { status: 400 });
+      // Try to find user with expired token to get email
+      const expiredUser = await User.findOne({ verifyToken: token });
+      return NextResponse.json({ 
+        error: "Invalid or expired token",
+        email: expiredUser?.email || null
+      }, { status: 400 });
     }
 
     user.isVerified = true;
