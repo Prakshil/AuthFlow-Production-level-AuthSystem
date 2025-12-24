@@ -12,7 +12,6 @@
 [![JWT](https://img.shields.io/badge/JWT-Auth-orange?style=flat-square&logo=jsonwebtokens)](https://jwt.io/)
 [![Tailwind](https://img.shields.io/badge/Tailwind-CSS-38B2AC?style=flat-square&logo=tailwind-css)](https://tailwindcss.com/)
 
-[Live Demo](https://your-deployed-url.vercel.app) • [Documentation](#-documentation) • [Installation](#-quick-start) • [API Reference](#-api-reference)
 
 </div>
 
